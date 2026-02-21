@@ -12,8 +12,9 @@ function App() {
   const [message, setMessage] = useState('');
   const [activeTab, setActiveTab] = useState('DATA'); 
   
-  // 1. FIXED: Added your specific Codespace HTTPS URL as a fallback to bypass Brave's "Blocked by Client" error.
-  const API_URL = ((import.meta as any).env.VITE_API_URL as string) || "https://congenial-fiesta-5gjq65q7g7rqfvxvj-3000.app.github.dev/guestbook";
+  // PLACE IT HERE (Line 15)
+  // This uses your Vercel setting first, then falls back to your working Codespace link.
+  const API_URL = ((import.meta as any).env.VITE_API_URL as string) || "https://verbose-tribble-77rgq99qq9v3g5v-3000.app.github.dev/guestbook";
 
   const MAX_LENGTH = 200;
   const BANNED_WORDS = ['badword1', 'spam', 'junk']; 
@@ -25,6 +26,7 @@ function App() {
     if (!API_URL) return;
     try {
       const res = await fetch(API_URL);
+      if (!res.ok) throw new Error('Network response was not ok');
       const data = await res.json();
       setPosts(Array.isArray(data) ? data : []);
     } catch (err) { 
@@ -41,7 +43,11 @@ function App() {
   const playClick = () => {
     clickSound.currentTime = 0;
     clickSound.volume = 0.2;
-    clickSound.play();
+    clickSound.play().catch(() => {}); 
+  };
+
+  const startHum = () => {
+    humSound.current.play().catch(() => {});
   };
 
   const isInvalid = () => {
@@ -67,11 +73,11 @@ function App() {
       setName('');
       setMessage('');
       fetchPosts();
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error("Upload Error:", err); }
   };
 
   return (
-    <div className="container" onClick={() => humSound.current.play()}>
+    <div className="container" onClick={startHum}>
       <div className="scanline"></div>
       
       <header>

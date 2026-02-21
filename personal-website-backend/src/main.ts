@@ -4,9 +4,10 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // ADD THIS LINE BEFORE app.listen
+  // Enable CORS so your Vercel frontend can talk to this backend
   app.enableCors(); 
 
-  await app.listen(3000);
+  // Use the port provided by the hosting service (Render) or 3000 as a backup
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
