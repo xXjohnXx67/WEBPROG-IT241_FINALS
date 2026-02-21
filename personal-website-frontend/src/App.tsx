@@ -12,7 +12,8 @@ function App() {
   const [message, setMessage] = useState('');
   const [activeTab, setActiveTab] = useState('DATA'); 
   
-  const API_URL = (import.meta.env.VITE_API_URL as string);
+  // FIXED: Using 'as any' to stop the TypeScript errors on import.meta
+  const API_URL = ((import.meta as any).env.VITE_API_URL as string) || "";
   const MAX_LENGTH = 200;
   const BANNED_WORDS = ['badword1', 'spam', 'junk']; 
 
@@ -20,6 +21,7 @@ function App() {
   const humSound = useRef(new Audio('https://www.soundjay.com/free-music/iron-man-humming-loop.mp3'));
 
   const fetchPosts = async () => {
+    if (!API_URL) return;
     try {
       const res = await fetch(API_URL);
       const data = await res.json();
@@ -51,7 +53,7 @@ function App() {
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isInvalid()) return;
+    if (isInvalid() || !API_URL) return;
     playClick();
     try {
       await fetch(API_URL, {
@@ -93,7 +95,6 @@ function App() {
         {activeTab === 'STAT' && (
           <div className="stat-screen animate-fade">
             <div className="vault-boy-container">
-              {/* POINTING TO YOUR LOCAL GIF IN PUBLIC FOLDER */}
               <img 
                 src="/vaultboy_animated.gif" 
                 alt="Vault Boy Status" 
@@ -173,8 +174,8 @@ function App() {
         )}
       </div>
       <footer className="vault-footer">
-  <p>© 2026 VAULT-TEC INDUSTRIES // PROPERTY OF HAMER & OCHOA</p>
-</footer>
+        <p>© 2026 VAULT-TEC INDUSTRIES // PROPERTY OF HAMER & OCHOA</p>
+      </footer>
     </div>
   );
 }
