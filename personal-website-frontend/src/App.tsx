@@ -12,8 +12,9 @@ function App() {
   const [message, setMessage] = useState('');
   const [activeTab, setActiveTab] = useState('DATA'); 
   
-  // FIXED: Using 'as any' to stop the TypeScript errors on import.meta
-  const API_URL = ((import.meta as any).env.VITE_API_URL as string) || "";
+  // 1. FIXED: Added your specific Codespace HTTPS URL as a fallback to bypass Brave's "Blocked by Client" error.
+  const API_URL = ((import.meta as any).env.VITE_API_URL as string) || "https://congenial-fiesta-5gjq65q7g7rqfvxvj-3000.app.github.dev/guestbook";
+
   const MAX_LENGTH = 200;
   const BANNED_WORDS = ['badword1', 'spam', 'junk']; 
 
@@ -26,7 +27,9 @@ function App() {
       const res = await fetch(API_URL);
       const data = await res.json();
       setPosts(Array.isArray(data) ? data : []);
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error("Fetch Error:", err); 
+    }
   };
 
   useEffect(() => {
